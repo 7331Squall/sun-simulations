@@ -1,17 +1,10 @@
-[![Actions Status](https://github.com/ccnmtl/astro-simulations/workflows/build-and-test/badge.svg)](https://github.com/ccnmtl/astro-simulations/actions)
+[![Actions Status](https://github.com/7331squall/sun-simulations/workflows/build-and-test/badge.svg)](https://github.com/7331squall/sun-simulations/actions)
 
-Astronomy Simulations and Animations
+Beautified Sun Simulation and Animations
 
-JavaScript/HTML ports of the Flash originals, found here: [http://astro.unl.edu/animationsLinks.html](http://astro.unl.edu/animationsLinks.html) (source files here: [https://cse.unl.edu/~astrodev/flashdev2/](https://cse.unl.edu/~astrodev/flashdev2/))
+Fork of a Columbia University Center for Teaching and Learning simulator, with the intent to add features and beautify its interface, making it easier for kids.
 
-* [Small-Angle Approximation Demonstrator](https://ccnmtl.github.io/astro-simulations/small-angle-demo/)
-* [Lunar Phase Simulator](https://ccnmtl.github.io/astro-simulations/lunar-phase-simulator/)
 * [Motions of the Sun Simulator](https://ccnmtl.github.io/astro-simulations/sun-motion-simulator/)
-* [Exoplanet Transit Simulator](https://ccnmtl.github.io/astro-simulations/exoplanet-transit-simulator/)
-* [Eclipsing Binary Simulator](https://ccnmtl.github.io/astro-simulations/eclipsing-binary-simulator/)
-* [Hydrogen Atom Simulator](https://ccnmtl.github.io/astro-simulations/hydrogen-atom-simulator/)
-* [Gas Retention Simulator](https://ccnmtl.github.io/astro-simulations/gas-retention-simulator/)
-* [Circumstellar Habitable Zone Simulator](https://ccnmtl.github.io/astro-simulations/circumstellar-habitable-zone-simulator/)
 
 ## Development guide
 
