@@ -141,7 +141,7 @@ const getDayOfYear = function(d) {
     const diff = (d - start) + (
         (start.getTimezoneOffset() - d.getTimezoneOffset()) * 60 * 1000);
     const oneDay = 1000 * 60 * 60 * 24;
-    let day = Math.floor(diff / oneDay);
+    let day = Math.round(diff / oneDay);
 
     // Add the time of day as a fraction of 1.
     let time = 0;

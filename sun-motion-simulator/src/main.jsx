@@ -48,6 +48,7 @@ class SunMotionSim extends React.Component {
             showMonthLabels: false,
             showUnderside: true,
             showStickfigure: true,
+            showApparentSunMovement: false,
 
             // Advanced
             showAnalemma: false
@@ -92,18 +93,18 @@ class SunMotionSim extends React.Component {
         const hourAngleDisplay = formatHours(this.state.hourAngle);
 
         const formattedDate = this.state.dateTime
-                                  .toLocaleDateString([], {
-                                      day: 'numeric',
-                                      month: 'long',
-                                      timeZone: 'UTC'
-                                  });
+            .toLocaleDateString([], {
+                day: 'numeric',
+                month: 'long',
+                timeZone: 'UTC'
+            });
         const formattedTime = this.state.dateTime
-                                  .toLocaleTimeString([], {
-                                      hour: '2-digit',
-                                      minute: '2-digit',
-                                      hourCycle: 'h23',
-                                      timeZone: 'UTC'
-                                  });
+            .toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+                hourCycle: 'h23',
+                timeZone: 'UTC'
+            });
 
         const latUnit = this.state.latitude >= 0 ? 'N' : 'S';
 
@@ -134,6 +135,7 @@ class SunMotionSim extends React.Component {
                         showEcliptic={this.state.showEcliptic}
                         showMonthLabels={this.state.showMonthLabels}
                         showStickfigure={this.state.showStickfigure}
+                        showApparentSunMovement={this.state.showApparentSunMovement}
                         showUnderside={this.state.showUnderside}
                         showAnalemma={this.state.showAnalemma}
                         sunDeclination={this.state.sunDeclination}
@@ -156,16 +158,7 @@ class SunMotionSim extends React.Component {
                                     <div>
                                         Equation of time: {eot}
                                     </div>
-                                    <div className="custom-control custom-checkbox">
-                                        <input type="checkbox" className="custom-control-input"
-                                               onChange={this.handleInputChange}
-                                               checked={this.state.showAnalemma}
-                                               name="showAnalemma" id="showAnalemma" />
-                                        <label className="custom-control-label"
-                                               htmlFor="showAnalemma">
-                                            Show analemma
-                                        </label>
-                                    </div>
+
                                 </div>
                             </div>
                             <div className="col">
@@ -211,7 +204,7 @@ class SunMotionSim extends React.Component {
                     </form>
 
                     <div className="row">
-                        <div className="col-6">
+                        <div className="col-5">
                             <AnimationControls
                                 isPlaying={this.state.isPlaying}
                                 onStartClick={this.onStartClick}
@@ -222,13 +215,15 @@ class SunMotionSim extends React.Component {
                                 onAnimRateUpdate={this.onAnimRateUpdate}
                             />
                         </div>
-                        <div className="col-4">
+                        <div className="col-7">
                             <GeneralSettings
                                 showDeclinationCircle={this.state.showDeclinationCircle}
                                 showEcliptic={this.state.showEcliptic}
                                 showMonthLabels={this.state.showMonthLabels}
                                 showUnderside={this.state.showUnderside}
                                 showStickfigure={this.state.showStickfigure}
+                                showApparentSunMovement={this.state.showApparentSunMovement}
+                                showAnalemma={this.state.showAnalemma}
                                 onInputChange={this.handleInputChange} />
                         </div>
                     </div>
@@ -320,14 +315,14 @@ class SunMotionSim extends React.Component {
         }
 
         if (newDate && newDate !== this.state.dateTime) {
-            this.setState({dateTime: newDate});
+            this.setState({ dateTime: newDate });
         }
     }
     handleInputChange(event) {
         const target = event.target;
         const name = target.name;
         let value = target.type === 'checkbox' ?
-                    target.checked : target.value;
+            target.checked : target.value;
 
         if (target.type === 'radio') {
             value = target.id === (target.name + 'Radio');
@@ -340,16 +335,16 @@ class SunMotionSim extends React.Component {
         });
     }
     onAnimRateUpdate(rate) {
-        this.setState({animationRate: rate});
+        this.setState({ animationRate: rate });
     }
     onStartClick() {
         if (!this.state.isPlaying) {
             this.then = Date.now();
             this.animate();
-            this.setState({isPlaying: true});
+            this.setState({ isPlaying: true });
         } else {
             cancelAnimationFrame(this.frameId);
-            this.setState({isPlaying: false});
+            this.setState({ isPlaying: false });
         }
     }
     onResetClick(e) {
@@ -370,10 +365,10 @@ class SunMotionSim extends React.Component {
             lat = roundToOnePlace(lat);
         }
 
-        this.setState({latitude: lat});
+        this.setState({ latitude: lat });
     }
     onDateTimeUpdate(dateTime) {
-        this.setState({dateTime: dateTime});
+        this.setState({ dateTime: dateTime });
     }
     /**
      * Handle the update for the <input type="number">
@@ -382,7 +377,7 @@ class SunMotionSim extends React.Component {
         const newDay = forceNumber(e.target.value);
         const d = new Date(this.state.dateTime);
         d.setUTCDate(newDay);
-        this.setState({dateTime: d});
+        this.setState({ dateTime: d });
     }
     /**
      * Handle the update for the month select box.
@@ -391,7 +386,7 @@ class SunMotionSim extends React.Component {
         const newMonth = forceNumber(e.target.value);
         const d = new Date(this.state.dateTime);
         d.setUTCMonth(newMonth);
-        this.setState({dateTime: d});
+        this.setState({ dateTime: d });
     }
     /**
      * Handle the update for the date picker.
@@ -402,7 +397,7 @@ class SunMotionSim extends React.Component {
         newDate.setUTCHours(this.state.dateTime.getUTCHours());
         newDate.setUTCMinutes(this.state.dateTime.getUTCMinutes());
         newDate.setUTCSeconds(this.state.dateTime.getUTCSeconds());
-        this.setState({dateTime: newDate});
+        this.setState({ dateTime: newDate });
     }
 }
 

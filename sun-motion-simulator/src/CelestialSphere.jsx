@@ -2,23 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as THREE from 'three';
 import WEBGL from './utils/WebGL';
-import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-import {FXAAShader} from 'three/addons/shaders/FXAAShader.js';
-import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
-import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
-import {ShaderPass} from 'three/addons/postprocessing/ShaderPass.js';
-import {FontLoader} from 'three/addons/loaders/FontLoader.js';
-import {TextGeometry} from 'three/addons/geometries/TextGeometry.js';
-import {getDayOfYear, getEqnOfTime, getPosition, getTime} from './utils';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { getDayOfYear, getEqnOfTime, getPosition, getTime } from './utils';
 import MutedColorsShader from './shaders/MutedColorsShader';
 
 /**
  * hourAngle is in hours, so convert it to a fraction of
  * a full circle in radians.
  */
-const hourAngleToRadians = function(hourAngle) {
+const hourAngleToRadians = function (hourAngle) {
     const radians = -(hourAngle / 24) * (Math.PI * 2)
-                  - Math.PI;
+        - Math.PI;
     return radians;
 };
 
@@ -118,13 +118,15 @@ export default class CelestialSphere extends React.Component {
 
         // TODO: this will be removed in the future, but necessary for now:
         // https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733
-        renderer.useLegacyLights = true;
+        renderer.useLegacyLights = false;
 
         // Lights
         const ambient = new THREE.AmbientLight(0xd0d0d0);
+        ambient.intensity = ambient.intensity * Math.PI
         scene.add(ambient);
 
-        const light = new THREE.DirectionalLight(0xc0c0c0);
+        const light = new THREE.DirectionalLight(0xffffff);
+        light.intensity = light.intensity * Math.PI
         this.light = light;
         const declinationRad = this.getSunDeclinationRadius(
             this.props.sunDeclination);
@@ -160,12 +162,13 @@ export default class CelestialSphere extends React.Component {
 
         this.planeTexture = new THREE.TextureLoader().load('img/plane.svg');
         this.planeTexSouthPole = new THREE.TextureLoader()
-                                          .load('img/plane_all_n.svg');
+            .load('img/plane_all_n.svg');
         this.planeTexNorthPole = new THREE.TextureLoader()
-                                          .load('img/plane_all_s.svg');
+            .load('img/plane_all_s.svg');
 
         this.plane = this.drawPlane(scene);
 
+        this.apparentSunMovement = false;
         this.stickFigure = this.drawStickFigure();
         scene.add(this.stickFigure);
         light.target = this.stickFigure;
@@ -370,7 +373,7 @@ export default class CelestialSphere extends React.Component {
 
         if (
             prevState.mouseoverCelestialEquator !==
-                this.state.mouseoverCelestialEquator
+            this.state.mouseoverCelestialEquator
         ) {
             this.celestialEquator.verticesNeedUpdate = true;
             if (this.state.mouseoverCelestialEquator) {
@@ -402,6 +405,9 @@ export default class CelestialSphere extends React.Component {
         }
         if (prevProps.showStickfigure !== this.props.showStickfigure) {
             this.stickFigure.visible = this.props.showStickfigure;
+        }
+        if (prevProps.showApparentSunMovement !== this.props.showApparentSunMovement) {
+            this.apparentSunMovement = this.props.showApparentSunMovement;
         }
         if (prevProps.showUnderside !== this.props.showUnderside) {
             this.solidBlackDome.visible = !this.props.showUnderside;
@@ -560,7 +566,7 @@ export default class CelestialSphere extends React.Component {
         this.primeHourCircle = new THREE.Group();
 
         const me = this;
-        this.drawPrimeHourMonthsText(scene).then(function(primeHourMonthsText) {
+        this.drawPrimeHourMonthsText(scene).then(function (primeHourMonthsText) {
             primeHourMonthsText.visible = me.props.showMonthLabels;
 
             // Apply the same rotation as the ecliptic circle (this.ecliptic).
@@ -607,7 +613,7 @@ export default class CelestialSphere extends React.Component {
             color: 0xffffff
         });
 
-        return new Promise(function(resolve) {
+        return new Promise(function (resolve) {
             loader.load(
                 'fonts/helvetiker_bold.typeface.json',
                 function (font) {
@@ -642,7 +648,8 @@ export default class CelestialSphere extends React.Component {
         const spriteMap = new THREE.TextureLoader().load('img/stickfigure.svg');
         const spriteMaterial = new THREE.MeshLambertMaterial({
             transparent: true,
-            map: spriteMap
+            map: spriteMap,
+            alphaTest: 0.5
         });
         const depthMaterial = new THREE.MeshDepthMaterial({
             depthPacking: THREE.RGBADepthPacking,
@@ -704,7 +711,7 @@ export default class CelestialSphere extends React.Component {
         const a = this.initAnalemmaArray(n);
 
         class AnalemmaCurve extends THREE.Curve {
-            constructor(scale){
+            constructor(scale) {
                 super();
                 this.scale = scale ?? 1;
             }
@@ -720,14 +727,15 @@ export default class CelestialSphere extends React.Component {
                 // t to x.
                 const w = t / 99999999;
                 return new THREE.Vector3(v.x + w, 1.15 * v.z, 1.2 * v.y)
-                                .multiplyScalar(this.scale);
+                    .multiplyScalar(this.scale);
             }
         }
 
         const path = new AnalemmaCurve(49);
         const geometry = new THREE.TubeGeometry(
             path, 64, 0.35, 8, false);
-        const material = new THREE.MeshBasicMaterial({color: 0xe80000});
+        console.warn(this.apparentSunMovement);
+        const material = new THREE.MeshBasicMaterial({ color: (this.apparentSunMovement ? 0x00ff00 : 0xe80000) });
         const analemma = new THREE.Mesh(geometry, material);
 
         analemma.visible = this.props.showAnalemma;
@@ -762,10 +770,10 @@ export default class CelestialSphere extends React.Component {
     updateAngleGeometry(ellipse, angle) {
         const angleDiff = Math.abs(angle);
         const curve = new THREE.EllipseCurve(
-            0,  0,    // ax, aY
+            0, 0,    // ax, aY
             this.sphereRadius, this.sphereRadius,   // xRadius, yRadius
             // aStartAngle, aEndAngle
-            0,  angleDiff,
+            0, angleDiff,
             false,    // aClockwise
             0         // aRotation
         );
@@ -834,7 +842,7 @@ export default class CelestialSphere extends React.Component {
         }
         const c = new THREE.Color(0xb0c0ff);
         c.lerp(new THREE.Color(0x353535),
-               1 - Math.min(angle / 50));
+            1 - Math.min(angle / 50));
         return c;
     }
 
@@ -852,7 +860,7 @@ export default class CelestialSphere extends React.Component {
      */
     getSunDeclinationLineRadius(sunDeclination) {
         return this.sphereRadius * (Math.cos(sunDeclination) ** 1.25) -
-               this.visualLineGap;
+            this.visualLineGap;
     }
 
     render() {
@@ -886,7 +894,7 @@ export default class CelestialSphere extends React.Component {
 
         return (
             <div id={this.id}
-                 ref={this.mount}>
+                ref={this.mount}>
                 <canvas
                     onMouseMove={this.onMouseMove}
                     id={this.id + 'Canvas'} width={860} height={860} />
@@ -1044,7 +1052,7 @@ export default class CelestialSphere extends React.Component {
                 let obj = intersects[0].object;
                 let key = 'mouseover' + obj.name;
 
-                this.setState({[key]: true});
+                this.setState({ [key]: true });
             }
         }
     }
@@ -1062,14 +1070,14 @@ export default class CelestialSphere extends React.Component {
                     this.controls.enabled = false;
 
                     if (obj.name === 'Sun') {
-                        this.setState({isDraggingSun: true});
+                        this.setState({ isDraggingSun: true });
                     }
                 } else {
-                    this.setState({isDragging: true});
+                    this.setState({ isDragging: true });
                 }
             }
         } else {
-            this.setState({isDragging: true});
+            this.setState({ isDragging: true });
         }
     }
 
@@ -1098,6 +1106,7 @@ CelestialSphere.propTypes = {
     showEcliptic: PropTypes.bool.isRequired,
     showMonthLabels: PropTypes.bool.isRequired,
     showStickfigure: PropTypes.bool.isRequired,
+    showApparentSunMovement: PropTypes.bool.isRequired,
     showUnderside: PropTypes.bool.isRequired,
     showAnalemma: PropTypes.bool.isRequired
 };

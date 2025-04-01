@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {RangeStepInput} from 'react-range-step-input';
-import {roundToOnePlace} from './utils';
+import { RangeStepInput } from 'react-range-step-input';
+import { roundToOnePlace } from './utils';
 
 export default class AnimationControls extends React.Component {
     render() {
@@ -20,59 +20,63 @@ export default class AnimationControls extends React.Component {
 
         return (
             <React.Fragment>
-                <h5>Animation Controls</h5>
-
-                <button type="button"
-                        className="btn btn-primary btn-sm"
+                <ul className='list-group'>
+                    <li className="list-group-item list-group-item-primary">
+                        Animation Controls
+                    </li>
+                    <button type="button"
+                        className="list-group-item list-group-item-action active"
                         onClick={this.props.onStartClick}>
-                    {startBtnText}
-                </button>
-
-                <div className="form-group">
-                    <label>Animation mode:</label>
-                    <div className="row">
-                        <div className="col">
-                            <div className="custom-control custom-radio">
-                                <input type="radio" id="continuousRadio"
-                                       checked={!this.props.stepByDay}
-                                       onChange={this.onModeChange.bind(this)}
-                                       name="stepByDay" className="custom-control-input" />
-                                <label className="custom-control-label"
-                                       htmlFor="continuousRadio">Continuous</label>
-                            </div>
-                            <div className="custom-control custom-radio">
-                                <input type="radio" id="stepByDayRadio"
-                                       checked={this.props.stepByDay}
-                                       onChange={this.onModeChange.bind(this)}
-                                       name="stepByDay" className="custom-control-input" />
-                                <label className="custom-control-label"
-                                       htmlFor="stepByDayRadio">Step by day</label>
-                            </div>
+                        <span style={{ textAlign: "center" }}>Press here to<br />{startBtnText}</span>
+                    </button>
+                    <li className="list-group-item list-group-item-secondary">
+                        Animation mode:
+                    </li>
+                    <li className="list-group-item">
+                        <div className="form-check form-switch">
+                            <input type="checkbox" className="form-check-input"
+                                name="loopDay"
+                                onChange={this.props.onChange}
+                                checked={this.props.loopDay}
+                                disabled={this.props.stepByDay}
+                                id="loopDayToggle" />
+                            <label className="form-check-label" htmlFor="loopDayToggle">
+                                Loop day
+                            </label>
                         </div>
-                        <div className="col">
-                            <div className="custom-control custom-checkbox">
-                                <input type="checkbox" className="custom-control-input"
-                                       name="loopDay"
-                                       onChange={this.props.onChange}
-                                       checked={this.props.loopDay}
-                                       disabled={this.props.stepByDay}
-                                       id="loopDayToggle" />
-                                <label className="custom-control-label" htmlFor="loopDayToggle">
-                                    Loop day
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    </li>
+                    <li className="list-group-item">
+                        <input type="radio" id="continuousRadio"
+                            checked={!this.props.stepByDay}
+                            onChange={this.onModeChange.bind(this)}
+                            name="stepByDay" className="form-check-input me-1" />
+                        <label className="form-check-label"
+                            htmlFor="continuousRadio">Continuous</label>
+                    </li>
+                    <li className="list-group-item">
+                        <input type="radio" id="stepByDayRadio"
+                            checked={this.props.stepByDay}
+                            onChange={this.onModeChange.bind(this)}
+                            name="stepByDay" className="form-check-input me-1" />
+                        <label className="form-check-label"
+                            htmlFor="stepByDayRadio">Step by day</label>
+                    </li>
+                    <li className="list-group-item list-group-item-secondary">
+                        Animation speed:<br />{animationSpeed}
+                    </li>
+                    <li className='list-group-item'>
 
-                <label>Animation speed:</label> {animationSpeed}
-                <RangeStepInput className="form-control-range"
-                       name="animationRate"
-                       min={this.props.stepByDay ? 5 : 0.01}
-                       max={this.props.stepByDay ? 122 : 10}
-                       step={this.props.stepByDay ? 1 : 0.01}
-                       value={this.props.animationRate}
-                       onChange={this.props.onChange} />
+                        <RangeStepInput className="form-control-range"
+                            name="animationRate"
+                            min={this.props.stepByDay ? 5 : 0.01}
+                            max={this.props.stepByDay ? 122 : 10}
+                            step={this.props.stepByDay ? 1 : 0.01}
+                            value={this.props.animationRate}
+                            onChange={this.props.onChange} />
+                    </li>
+                </ul>
+
+
             </React.Fragment>
         );
     }
